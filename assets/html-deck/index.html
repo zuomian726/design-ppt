@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design PPT</title>
+  <style>
+    :root {
+      --canvas-w: 1280;
+      --canvas-h: 720;
+      --bg: #0b0d10;
+      --surface: #15191f;
+      --text: #f5f7fa;
+      --muted: #9da6b2;
+      --accent: #76e6b8;
+      --line: rgba(255,255,255,.14);
+      --font-display: Inter, "Helvetica Neue", Arial, sans-serif;
+      --font-body: Inter, "Helvetica Neue", Arial, sans-serif;
+      --margin-x: 76px;
+      --margin-y: 58px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: #050607; color: var(--text); }
+    body { font-family: var(--font-body); overflow: hidden; }
+    #stage { position: fixed; inset: 0; display: grid; place-items: center; }
+    #deck { width: 1280px; height: 720px; transform-origin: center; }
+    .slide {
+      display: none;
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      padding: var(--margin-y) var(--margin-x);
+      background: var(--bg);
+    }
+    .slide.active { display: grid; }
+    .slide::after {
+      content: attr(data-page);
+      position: absolute;
+      right: var(--margin-x);
+      bottom: 28px;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: .08em;
+    }
+    h1, h2, p { margin: 0; }
+    h1, h2 { font-family: var(--font-display); letter-spacing: -.035em; }
+    h1 { max-width: 1050px; font-size: 72px; line-height: 1.02; font-weight: 650; }
+    h2 { max-width: 980px; font-size: 50px; line-height: 1.08; font-weight: 620; }
+    p { max-width: 760px; font-size: 25px; line-height: 1.45; color: var(--muted); }
+    .eyebrow { color: var(--accent); font-size: 15px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .rule { width: 100%; height: 1px; background: var(--line); }
+    .title-slide { align-content: end; gap: 24px; padding-bottom: 92px; }
+    .statement { align-content: center; gap: 26px; }
+    .evidence { grid-template-columns: 1fr 1.1fr; gap: 70px; align-items: center; }
+    .metric { color: var(--accent); font: 650 132px/1 var(--font-display); letter-spacing: -.06em; }
+    .caption { font-size: 18px; line-height: 1.4; color: var(--muted); }
+    .panel { border-top: 1px solid var(--line); padding-top: 26px; }
+    @media print {
+      @page { size: 13.333in 7.5in; margin: 0; }
+      html, body { background: white; overflow: visible; }
+      #stage, #deck { position: static; display: block; width: auto; height: auto; transform: none !important; }
+      .slide, .slide.active { display: grid; break-after: page; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+  <main id="stage">
+    <div id="deck">
+      <section class="slide title-slide active" data-page="01">
+        <div class="eyebrow">Presentation label</div>
+        <h1>Write the deck’s central idea as a decisive statement.</h1>
+        <p>Use this subtitle for context, audience, author, or date—not a second headline.</p>
+      </section>
+
+      <section class="slide evidence" data-page="02">
+        <div>
+          <div class="eyebrow">Evidence</div>
+          <div class="metric">72%</div>
+          <p class="caption">Replace with a verified metric and concise unit or timeframe.</p>
+        </div>
+        <div class="panel">
+          <h2>Make the slide title state what the evidence means.</h2>
+          <p style="margin-top: 26px">Add only the qualification needed to interpret the result. Put methodology and sources in a quiet footer.</p>
+        </div>
+      </section>
+
+      <section class="slide statement" data-page="03">
+        <div class="eyebrow">Synthesis</div>
+        <h1>End a sequence by resolving it—not by adding another list.</h1>
+        <div class="rule"></div>
+        <p>Duplicate and adapt semantic layouts instead of turning every slide into identical cards.</p>
+      </section>
+    </div>
+  </main>
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    let index = 0;
+    function fit() {
+      const scale = Math.min(innerWidth / 1280, innerHeight / 720);
+      document.querySelector('#deck').style.transform = `scale(${scale})`;
+    }
+    function show(next) {
+      index = Math.max(0, Math.min(slides.length - 1, next));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    }
+    addEventListener('resize', fit);
+    addEventListener('keydown', event => {
+      if (['ArrowRight', 'PageDown', ' '].includes(event.key)) show(index + 1);
+      if (['ArrowLeft', 'PageUp'].includes(event.key)) show(index - 1);
+      if (event.key === 'Home') show(0);
+      if (event.key === 'End') show(slides.length - 1);
+    });
+    fit();
+  </script>
+</body>
+</html>
